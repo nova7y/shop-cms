@@ -22,6 +22,9 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 
 
 
-##项目开发步骤
+## 项目开发步骤
 1. 完成vue-cli初始化
 2. 完成后台登陆功能
+3. 路由守卫+退出登陆、后台页面搭建(导航列表、子组件)
+`请求数据需要使用（axios拦截器）带着token信息`
+4. 

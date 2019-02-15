@@ -10,8 +10,16 @@ import './assets/fonts/iconfont.css'
 // element-ui库
 import ElementUI from 'element-ui'
 Vue.use(ElementUI)
-// axios配置
+// axios配置、请求时携带用户token
 axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
+axios.interceptors.request.use((config) => {
+  let token = window.sessionStorage.getItem('token')
+  config.headers.Authorization = token
+  return config
+}, (error) => {
+  return Promise.reject(error)
+})
+
 Vue.prototype.axios = axios
 
 Vue.config.productionTip = false
