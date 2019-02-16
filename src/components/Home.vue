@@ -62,9 +62,9 @@ export default {
     // 获取左侧导航列表
     async getList() {
       var { data: res } = await this.axios.get('/menus/')
-      if (res.meta.status === 200) {
-        this.menuList = res.data
-      }
+      if (res.meta.status === 200) return (this.menuList = res.data)
+
+      this.$message.error('导航信息获取失败')
     },
     // 退出登陆
     logout() {

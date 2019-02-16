@@ -5,3 +5,42 @@ body,
   padding: 0;
   height: 100%;
 }
+
+/* 容器盒子 */
+.el-main {
+  background: #eaedf1;
+}
+
+/* 卡片样式 */
+.el-card {
+  margin-top: 15px;
+}
+
+.el-card {
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .15) !important;
+}
+
+/* 数据表格 */
+.el-table {
+  margin-top: 20px;
+}
+
+.has-gutter tr th {
+  background: #333744;
+  color: #fff;
+}
+
+/* 分页样式 */
+.el-pagination {
+  margin-top: 20px;
+}
+
+.el-pagination ul .number {
+  font-weight: 400;
+  color: #ccc;
+}
+
+.el-pagination ul .active {
+  font-weight: 700;
+  color: #409EFF;
+}
