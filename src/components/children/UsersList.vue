@@ -1,9 +1,6 @@
 <template>
   <div>
-<<<<<<< HEAD
-=======
     <!-- 面包屑导航 -->
->>>>>>> users
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>用户管理</el-breadcrumb-item>
@@ -25,16 +22,11 @@
           </el-input>
         </el-col>
         <el-col :span="6">
-<<<<<<< HEAD
-          <el-button type="success">添加用户</el-button>
-        </el-col>
-      </el-row>
-=======
           <el-button type="success" @click="addUserBoxShow=true">添加用户</el-button>
         </el-col>
       </el-row>
+
       <!-- 用户列表内容 表格 -->
->>>>>>> users
       <el-table :data="tableData" border style="width: 100%" :stripe="true">
         <el-table-column type="index" label="序号" width="60"></el-table-column>
         <el-table-column prop="username" label="用户名"></el-table-column>
@@ -51,14 +43,12 @@
           ></el-switch>
         </el-table-column>
         <el-table-column label="操作" width="200">
-<<<<<<< HEAD
           <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
           <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
 
           <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false">
             <el-button type="success" icon="el-icon-share" size="mini"></el-button>
           </el-tooltip>
-=======
           <template slot-scope="info">
             <el-button
               type="primary"
@@ -83,7 +73,6 @@
               <el-button type="success" icon="el-icon-share" size="mini"></el-button>
             </el-tooltip>
           </template>
->>>>>>> users
         </el-table-column>
       </el-table>
       <!-- 分页功能 -->
@@ -92,17 +81,11 @@
         @current-change="handleCurrentChange"
         :current-page="userParams.pagenum"
         :page-sizes="[3, 5, 10, 20]"
-<<<<<<< HEAD
-        :page-size="100"
-=======
         :page-size="userParams.pagesize"
->>>>>>> users
         layout="total, sizes, prev, pager, next, jumper"
         :total="userParams.total"
       ></el-pagination>
     </el-card>
-<<<<<<< HEAD
-=======
 
     <!-- 弹窗：添加用户 -->
     <el-dialog title="添加用户" :visible.sync="addUserBoxShow" @close="resetAddForm">
@@ -142,30 +125,22 @@
       <el-button type="primary" @click="editUser">确认</el-button>
       <el-button type="info" @click="editUserBoxShow=false">取消</el-button>
     </el-dialog>
->>>>>>> users
   </div>
 </template>
 <script>
 export default {
   data() {
-<<<<<<< HEAD
-=======
     // 添加用户功能：自定义验证手机格式
     let checkMobile = (rule, value, callback) => {
       let check = /^1[123]{1}\d{9}$/
       if (check.test(value)) return callback()
       callback(new Error('手机号码格式错误：/^1[123]{1}d{9}$/'))
     }
->>>>>>> users
     return {
       tableData: [],
       userParams: {
         query: '', // 查询关键字
         pagenum: 1, // 当前页码
-<<<<<<< HEAD
-        pagesize: 3, // 每页显示条数
-        total: 0 // 数据总数量
-=======
         pagesize: 10, // 每页显示条数
         total: 0 // 数据总数量
       },
@@ -197,7 +172,6 @@ export default {
         username: '',
         email: '',
         mobile: ''
->>>>>>> users
       }
     }
   },
@@ -221,8 +195,6 @@ export default {
 
       this.$message.success('修改状态成功')
     },
-<<<<<<< HEAD
-=======
     // 添加用户弹窗关闭后 重置表单
     resetAddForm() {
       this.$refs.addUserBox.resetFields()
@@ -272,7 +244,6 @@ export default {
       this.editUserBoxShow = false
       this.getUserData()
     },
->>>>>>> users
     // 分页功能：每页显示数据量 改变后
     handleSizeChange(val) {
       this.userParams.pagesize = val
