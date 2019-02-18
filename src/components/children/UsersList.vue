@@ -204,7 +204,6 @@ export default {
       this.$refs.addUserBox.validate(async verify => {
         if (!verify) return this.$message.error('表单填写不正确')
         let { data: res } = await this.axios.post('/users/', this.addUserData)
-        console.log(res)
         if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
 
         // 成功后提示信息 + 隐藏弹窗 + 重新获取用户列表数据
