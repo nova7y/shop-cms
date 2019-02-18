@@ -259,3 +259,8 @@ export default {
   }
 }
 </script>
+<style lang="less" scoped>
+.el-row {
+  margin-bottom: 15px;
+}
+</style>

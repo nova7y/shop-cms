@@ -27,7 +27,8 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
   - `请求数据需要使用（axios拦截器）带着token信息`
 - 用户管理：列表页面结构、用户信息读取
 - 用户管理：添加用户(自定义表单验证)、删除用户、修改用户
-- 权限管理：权限列表、角色列表 完成所有功能
+- 权限管理：完成权限列表 + 角色列表 渲染
+- 权限管理：角色列表功能(xxxxxxxxxxxxxxxxx)
 
 ### 遗留未做：
 

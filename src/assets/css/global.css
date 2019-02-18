@@ -22,7 +22,7 @@ body,
 
 /* 数据表格 */
 .el-table {
-  margin-top: 20px;
+  /* margin-top: 20px; */
 }
 
 .has-gutter tr th {
