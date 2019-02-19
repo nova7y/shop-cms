@@ -70,7 +70,12 @@
               placement="top"
               :enterable="false"
             >
-              <el-button type="success" icon="el-icon-share" size="mini"></el-button>
+              <el-button
+                type="success"
+                icon="el-icon-share"
+                size="mini"
+                @click="divideUserShow(info.row.id)"
+              ></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -125,6 +130,27 @@
       <el-button type="primary" @click="editUser">确认</el-button>
       <el-button type="info" @click="editUserBoxShow=false">取消</el-button>
     </el-dialog>
+
+    <!-- 弹窗：分配角色 -->
+    <el-dialog title="分配角色" :visible.sync="divideUserBoxShow" @close="resetDivideForm">
+      <el-form label-width="120px" :model="divideUserData" ref="divideUserBox">
+        <el-form-item label="用户名：">{{divideUserData.username}}</el-form-item>
+        <el-form-item label="权限选择：">
+          <el-select v-model="divideUserData.rid" placeholder="请选择">
+            <el-option
+              v-for="item in divideList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="divideUserBoxShow = false">取 消</el-button>
+        <el-button type="primary" @click="divideUser">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -172,7 +198,14 @@ export default {
         username: '',
         email: '',
         mobile: ''
-      }
+      },
+      // 分配角色from 显示/隐藏   绑定数据
+      divideUserBoxShow: false,
+      divideUserData: {
+        username: '',
+        rid: ''
+      },
+      divideList: []
     }
   },
   methods: {
@@ -218,6 +251,10 @@ export default {
       let { data: res } = await this.axios.delete(`/users/${id}`)
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.$message.success(res.meta.msg)
+      // 判断删除后 是否需要页码-1
+      if (this.tableData.length === 1 && this.userParams.pagenum > 1) {
+        this.userParams.pagenum--
+      }
       this.getUserData()
     },
     // 编辑用户功能 - 显示弹窗、用户信息
@@ -241,6 +278,38 @@ export default {
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.$message.success(res.meta.msg)
       this.editUserBoxShow = false
+      this.getUserData()
+    },
+    // 分配角色功能 - 重置表单
+    resetDivideForm() {
+      this.$refs.divideUserBox.resetFields()
+    },
+    // 分配角色功能 - 显示弹窗
+    async divideUserShow(id) {
+      if (id === 500) return this.$message.warning('超级管理员 不允许修改')
+      this.divideUserBoxShow = true
+      // 获取当前点击用户的信息
+      let { data: res } = await this.axios.get(`users/${id}`)
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.divideUserData = res.data
+
+      // 获取所有管理员级别列表 - 用来填充select
+      let { data: res2 } = await this.axios.get(`/roles/`)
+      if (res2.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.divideList = res2.data
+    },
+    // 分配角色功能 - 提交表单
+    async divideUser() {
+      let { data: res } = await this.axios.put(
+        `users/${this.divideUserData.id}/role`,
+        {
+          id: this.divideUserData.id,
+          rid: this.divideUserData.rid
+        }
+      )
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.divideUserBoxShow = false
+      this.$message.success(res.meta.msg)
       this.getUserData()
     },
     // 分页功能：每页显示数据量 改变后

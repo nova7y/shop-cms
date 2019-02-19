@@ -28,8 +28,10 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 - 用户管理：列表页面结构、用户信息读取
 - 用户管理：添加用户(自定义表单验证)、删除用户、修改用户
 - 权限管理：完成权限列表 + 角色列表 渲染
+- 用户管理：完成分配角色功能
 - 权限管理：角色列表功能(xxxxxxxxxxxxxxxxx)
 
-### 遗留未做：
 
-- 用户管理：分配角色功能
+权限管理 角色列表  增删该查
+
+vue笔记  :style:{表达式}  补充
