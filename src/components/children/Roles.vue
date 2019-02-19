@@ -7,20 +7,113 @@
       <el-breadcrumb-item>角色列表</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card class="box-card">
-      <el-row>
-        <el-button type="primary">添加角色</el-button>
-      </el-row>
+      <el-button type="primary" @click="addDivisionBoxShow=true">添加角色</el-button>
       <!-- 数据表格 -->
       <el-table :data="tableData" stripe style="width: 100%" border>
+        <!-- 表格额外展开项 start -->
+        <el-table-column type="expand">
+          <template slot-scope="info">
+            <el-row
+              v-for="(item,index) in info.row.children"
+              :key="item.id"
+              :style="{'border-bottom':'1px solid #eee','border-top':index===0?'1px solid #eee':''}"
+            >
+              <!-- 一级tag -->
+              <el-col :span="5">
+                <el-tag closable>{{item.authName}}</el-tag>
+                <i class="el-icon-caret-right"></i>
+              </el-col>
+
+              <!-- 二级tag -->
+              <el-col :span="19">
+                <el-row
+                  v-for="(item2,index2) in item.children"
+                  :key="item2.id"
+                  :style="{'border-top':index2!==0?'1px solid #eee':''}"
+                >
+                  <el-col :span="6">
+                    <el-tag type="success" closable>{{item2.authName}}</el-tag>
+                    <i class="el-icon-caret-right"></i>
+                  </el-col>
+
+                  <!-- 三级tag -->
+                  <el-col :span="18">
+                    <el-tag
+                      type="warning"
+                      closable
+                      v-for="item3 in item2.children"
+                      :key="item3.id"
+                    >{{item3.authName}}</el-tag>
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          </template>
+        </el-table-column>
+        <!-- 表格额外展开项 end -->
         <el-table-column type="index" label="序号" width="60"></el-table-column>
         <el-table-column prop="roleName" label="角色名称"></el-table-column>
         <el-table-column prop="roleDesc" label="角色描述"></el-table-column>
         <el-table-column label="操作">
-          <el-button type="primary" size="mini" icon="el-icon-edit">编辑</el-button>
-          <el-button type="danger" size="mini" icon="el-icon-delete">删除</el-button>
-          <el-button type="warning" size="mini" icon="el-icon-share">分配权限</el-button>
+          <template slot-scope="info">
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-edit"
+              @click="editDivisionShow(info.row.id)"
+            >编辑</el-button>
+            <el-button
+              type="danger"
+              size="mini"
+              icon="el-icon-delete"
+              @click="delDivision(info.row.id)"
+            >删除</el-button>
+            <el-button type="warning" size="mini" icon="el-icon-share">分配权限</el-button>
+          </template>
         </el-table-column>
       </el-table>
+
+      <!-- 弹窗：添加角色 -->
+      <el-dialog title="添加角色" :visible.sync="addDivisionBoxShow" @close="resetAddForm">
+        <el-form
+          ref="addDivisionForm"
+          :model="addDivisionData"
+          label-width="80px"
+          :rules="addDivisionRules"
+        >
+          <el-form-item label="角色名称" prop="roleName">
+            <el-input v-model="addDivisionData.roleName"></el-input>
+          </el-form-item>
+          <el-form-item label="角色描述" prop="roleDesc">
+            <el-input v-model="addDivisionData.roleDesc"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="addDivisionBoxShow = false">取 消</el-button>
+          <el-button type="primary" @click="addDivision">确 定</el-button>
+        </div>
+      </el-dialog>
+
+      <!-- 弹窗：编辑角色 -->
+      <el-dialog title="编辑角色" :visible.sync="editDivisionBoxShow" @close="resetEditForm">
+        <el-form
+          ref="editDivisionForm"
+          :model="editDivisionData"
+          label-width="80px"
+          :rules="editDivisionRules"
+        >
+          <el-form-item label="角色名称" prop="roleName">
+            <el-input v-model="editDivisionData.roleName"></el-input>
+          </el-form-item>
+          <el-form-item label="角色描述" prop="roleDesc">
+            <el-input v-model="editDivisionData.roleDesc"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="editDivisionBoxShow = false">取 消</el-button>
+          <el-button type="primary" @click="editDivision">确 定</el-button>
+        </div>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -28,7 +121,31 @@
 export default {
   data() {
     return {
-      tableData: []
+      tableData: [],
+      // 添加角色 弹窗、信息、验证规则
+      addDivisionBoxShow: false,
+      addDivisionData: {
+        roleName: '',
+        roleDesc: ''
+      },
+      addDivisionRules: {
+        roleName: [
+          { required: true, message: '请输入角色名称', trigger: 'blur' },
+          { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur' }
+        ]
+      },
+      // 编辑角色 弹窗、信息、验证规则
+      editDivisionBoxShow: false,
+      editDivisionData: {
+        roleName: '',
+        roleDesc: ''
+      },
+      editDivisionRules: {
+        roleName: [
+          { required: true, message: '请输入角色名称', trigger: 'blur' },
+          { min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur' }
+        ]
+      }
     }
   },
   methods: {
@@ -37,7 +154,60 @@ export default {
       let { data: res } = await this.axios.get('/roles/')
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.tableData = res.data
-      console.log(res.data)
+      // 二级、三级tag
+    },
+    // 添加角色功能 - 添加表单
+    addDivision() {
+      this.$refs.addDivisionForm.validate(async verify => {
+        if (!verify) return this.$message.error('请正确填写表单')
+        let { data: res } = await this.axios.post(
+          '/roles/',
+          this.addDivisionData
+        )
+        if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
+        this.addDivisionBoxShow = false
+        this.$message.success(res.meta.msg)
+        this.getList()
+      })
+    },
+    // 添加角色功能 - 关闭弹窗时 清空表单数据
+    resetAddForm() {
+      this.$refs.addDivisionForm.resetFields()
+    },
+    // 删除角色功能
+    async delDivision(id) {
+      let { data: res } = await this.axios.delete(`roles/${id}`)
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.$message.success(res.meta.msg)
+      this.getList()
+    },
+    // 编辑角色功能 - 显示弹窗、角色信息
+    async editDivisionShow(id) {
+      this.editDivisionBoxShow = true
+      let { data: res } = await this.axios.get(`roles/${id}`)
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.editDivisionData = res.data
+    },
+    // 编辑角色功能 - 提交表单
+    editDivision() {
+      this.$refs.editDivisionForm.validate(async verify => {
+        if (!verify) return this.$message.error('请正确填写表单')
+        let { data: res } = await this.axios.put(
+          `roles/${this.editDivisionData.roleId}`,
+          {
+            roleName: this.editDivisionData.roleName,
+            roleDesc: this.editDivisionData.roleDesc
+          }
+        )
+        if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+        this.editDivisionBoxShow = false
+        this.$message.success(res.meta.msg)
+        this.getList()
+      })
+    },
+    // 编辑角色功能 - 关闭弹窗，重置表单
+    resetEditForm() {
+      this.$refs.editDivisionForm.resetFields()
     }
   },
   created() {
@@ -45,8 +215,12 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .el-row {
-  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+.el-tag {
+  margin: 5px;
 }
 </style>

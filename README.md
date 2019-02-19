@@ -29,9 +29,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 - 用户管理：添加用户(自定义表单验证)、删除用户、修改用户
 - 权限管理：完成权限列表 + 角色列表 渲染
 - 用户管理：完成分配角色功能
-- 权限管理：角色列表功能(xxxxxxxxxxxxxxxxx)
+- 权限管理：角色列表渲染、添加角色、编辑、删除   **拖欠：分配权限功能**
 
-
-权限管理 角色列表  增删该查
 
 vue笔记  :style:{表达式}  补充
