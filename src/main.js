@@ -3,6 +3,8 @@ import App from './App'
 import router from './router'
 import axios from 'axios'
 
+// 树状表格 - vue-table-with-tree-grid
+import ZkTable from 'vue-table-with-tree-grid'
 // 全局样式表
 import './assets/css/global.css'
 // 图标字体
@@ -20,6 +22,7 @@ axios.interceptors.request.use((config) => {
   return Promise.reject(error)
 })
 
+Vue.use(ZkTable)
 Vue.prototype.axios = axios
 
 Vue.config.productionTip = false

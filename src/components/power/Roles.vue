@@ -305,4 +305,7 @@ export default {
 .el-tag {
   margin: 5px;
 }
+.el-table {
+  margin-top: 15px;
+}
 </style>

@@ -22,7 +22,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 
 ## 项目开发步骤
 
-- 完成 vue-cli 初始化 + 后台登陆功能 + favicon配置
+- 完成 vue-cli 初始化 + 后台登陆功能 + favicon 配置
 - 路由守卫+退出登陆、后台页面搭建(导航列表、子组件)
   - `请求数据需要使用（axios拦截器）带着token信息`
 - 用户管理：列表页面结构、用户信息读取
@@ -30,5 +30,6 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 - 权限管理：完成权限列表 + 角色列表 渲染
 - 用户管理：完成分配角色功能
 - 权限管理：角色列表渲染、添加角色、编辑、删除
-- 权限管理：完成分配权限功能、删除权限功能
-- 分类管理：
+- 权限管理：分配权限功能、删除权限功能
+- 商品管理：商品分类（列表渲染 + 分页功能 + 编辑 + 删除）
+- 商品管理：商品分类（添加） 待完成

@@ -216,7 +216,7 @@ export default {
       let { data: res } = await this.axios.get('/users/', {
         params: this.userParams
       })
-      if (res.meta.status !== 200) return this.$message.error('信息获取失败')
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
 
       this.tableData = res.data.users // 管理员数据
       this.userParams.total = res.data.total // 数据总数量
@@ -224,7 +224,7 @@ export default {
     // 用户状态 更新
     async updateUserStatus(status, uId) {
       let { data: res } = await this.axios.put(`users/${uId}/state/${status}`)
-      if (res.meta.status !== 200) return this.$message.error('修改状态失败')
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
 
       this.$message.success('修改状态成功')
     },
@@ -235,7 +235,7 @@ export default {
     // 添加用户功能
     addUser() {
       this.$refs.addUserBox.validate(async verify => {
-        if (!verify) return this.$message.error('表单填写不正确')
+        if (!verify) return this.$message.error('请正确填写表单')
         let { data: res } = await this.axios.post('/users/', this.addUserData)
         if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
 
