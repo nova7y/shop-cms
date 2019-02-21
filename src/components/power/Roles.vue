@@ -20,7 +20,7 @@
             >
               <!-- 一级tag -->
               <el-col :span="5">
-                <el-tag closable>{{item.authName}}</el-tag>
+                <el-tag closable @close="delRight(item.id,info.row)">{{item.authName}}</el-tag>
                 <i class="el-icon-caret-right"></i>
               </el-col>
 
@@ -32,7 +32,11 @@
                   :style="{'border-top':index2!==0?'1px solid #eee':''}"
                 >
                   <el-col :span="6">
-                    <el-tag type="success" closable>{{item2.authName}}</el-tag>
+                    <el-tag
+                      type="success"
+                      closable
+                      @close="delRight(item2.id,info.row)"
+                    >{{item2.authName}}</el-tag>
                     <i class="el-icon-caret-right"></i>
                   </el-col>
 
@@ -43,6 +47,7 @@
                       closable
                       v-for="item3 in item2.children"
                       :key="item3.id"
+                      @close="delRight(item3.id,info.row)"
                     >{{item3.authName}}</el-tag>
                   </el-col>
                 </el-row>
@@ -68,7 +73,12 @@
               icon="el-icon-delete"
               @click="delDivision(info.row.id)"
             >删除</el-button>
-            <el-button type="warning" size="mini" icon="el-icon-share">分配权限</el-button>
+            <el-button
+              type="warning"
+              size="mini"
+              icon="el-icon-share"
+              @click="getDivisionTree(info.row)"
+            >分配权限</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -114,6 +124,23 @@
           <el-button type="primary" @click="editDivision">确 定</el-button>
         </div>
       </el-dialog>
+
+      <!-- 弹窗：分配权限 -->
+      <el-dialog title="分配权限" :visible.sync="setDivisionBoxShow">
+        <el-tree
+          :data="divisionData"
+          :props="divisionProps"
+          show-checkbox
+          node-key="id"
+          :default-checked-keys="defaultCheckedKeys"
+          default-expand-all
+          ref="selectTree"
+        ></el-tree>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="setDivisionBoxShow = false">取 消</el-button>
+          <el-button type="primary" @click="setDivision">确 定</el-button>
+        </div>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -145,7 +172,17 @@ export default {
           { required: true, message: '请输入角色名称', trigger: 'blur' },
           { min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur' }
         ]
-      }
+      },
+      // 分配角色 弹窗、信息
+      setDivisionBoxShow: false,
+      // 分配角色 - select data + 配置
+      divisionData: [],
+      defaultCheckedKeys: [],
+      divisionProps: {
+        children: 'children',
+        label: 'authName'
+      },
+      roleId: ''
     }
   },
   methods: {
@@ -208,6 +245,51 @@ export default {
     // 编辑角色功能 - 关闭弹窗，重置表单
     resetEditForm() {
       this.$refs.editDivisionForm.resetFields()
+    },
+    // 删除角色下的权限 - tag触发
+    async delRight(rightId, role) {
+      // rightId:点击tag对应的数据id
+      // role：父级角色信息
+      let { data: res } = await this.axios.delete(
+        `/roles/${role.id}/rights/${rightId}/`
+      )
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.$message.success(res.meta.msg)
+      role.children = res.data
+    },
+    // 分配角色功能 - 获取原权限树
+    async getDivisionTree(role) {
+      // role：父级角色信息
+      this.setDivisionBoxShow = true
+      this.roleId = role.id
+      // 获取所有的权限 - 渲染select tree
+      let { data: res } = await this.axios.get('rights/tree')
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.divisionData = res.data
+      // 递归遍历role信息，找出该角色下的权限id
+      let tempAry = []
+      this.getLeafIds(role, tempAry)
+      this.defaultCheckedKeys = tempAry
+    },
+    // 分配角色功能 - 递归遍历 第三级权限id
+    getLeafIds(role, tempAry) {
+      if (!role.children) return tempAry.push(role.id)
+      role.children.forEach(item => this.getLeafIds(item, tempAry))
+    },
+    // 分配角色功能 - 提交表单
+    async setDivision() {
+      // 获取select tree选中的节点key(id)，拼接字符串后发ajax请求
+      let key1 = this.$refs.selectTree.getCheckedKeys() // 目前选中节点的 key
+      let key2 = this.$refs.selectTree.getHalfCheckedKeys() // 目前半选的节点的 key
+      let keyAry = [...key1, ...key2].join(',')
+
+      let { data: res } = await this.axios.post(`roles/${this.roleId}/rights`, {
+        rids: keyAry
+      })
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.$message.success(res.meta.msg)
+      this.setDivisionBoxShow = false
+      this.getList()
     }
   },
   created() {
