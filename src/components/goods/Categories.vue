@@ -7,7 +7,7 @@
       <el-breadcrumb-item>商品分类</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card class="box-card">
-      <el-button type="success">添加分类</el-button>
+      <el-button type="success" @click="addCategoriesBoxShow">添加分类</el-button>
       <!-- 商品分类table -->
       <zk-table
         :data="tableData"
@@ -59,7 +59,7 @@
       ></el-pagination>
 
       <!-- 弹窗：编辑功能 -->
-      <el-dialog title="编辑分类" :visible.sync="editBoxShow" @close="resetEditBoxShow">
+      <el-dialog title="编辑分类" :visible.sync="editBoxShow" @close="resetEditBox">
         <el-form
           :model="editFormData"
           status-icon
@@ -75,6 +75,30 @@
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="editCategories">确定</el-button>
           <el-button type="info" @click="editBoxShow=false">取消</el-button>
+        </div>
+      </el-dialog>
+
+      <!-- 弹窗：添加功能 -->
+      <el-dialog title="添加分类" :visible.sync="addBoxShow" @close="resetAddBox">
+        <el-form ref="addForm" :model="addFormData" label-width="80px" :rules="addRules">
+          <el-form-item label="分类名称" prop="cat_name">
+            <el-input v-model="addFormData.cat_name"></el-input>
+          </el-form-item>
+          <el-form-item label="分类上级">
+            <el-cascader
+              :options="categoriesOptions"
+              :props="categoriesOptionsProps"
+              @change="categoriesOptionsChange"
+              v-model="selectedOptions"
+              change-on-select
+              clearable
+              style="width:100%"
+            ></el-cascader>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="addCategories">确定</el-button>
+          <el-button type="info" @click="addBoxShow=false">取消</el-button>
         </div>
       </el-dialog>
     </el-card>
@@ -125,10 +149,30 @@ export default {
       },
       editRules: {
         cat_name: [
+          { required: true, message: '请输入分类名称', trigger: 'blur' },
+          { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur' }
+        ]
+      },
+      // 添加功能弹窗、数据、接口参数
+      addBoxShow: false,
+      addFormData: {
+        cat_name: '',
+        cat_pid: 0, // 分类父 ID
+        cat_level: 0 // 分类层级 0 or 1
+      },
+      addRules: {
+        cat_name: [
           { required: true, message: '请输入活动名称', trigger: 'blur' },
           { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur' }
         ]
-      }
+      },
+      categoriesOptionsProps: {
+        label: 'cat_name',
+        value: 'cat_id',
+        children: 'children'
+      },
+      categoriesOptions: [],
+      selectedOptions: []
     }
   },
   methods: {
@@ -165,7 +209,7 @@ export default {
       })
     },
     // 编辑功能 - 弹窗关闭重置表单数据
-    resetEditBoxShow() {
+    resetEditBox() {
       this.$refs.editForm.resetFields()
     },
     // 删除功能 - 显示弹窗
@@ -178,6 +222,45 @@ export default {
         this.categoriesParams.pagenum--
       }
       this.getCategoriesData()
+    },
+    // 添加功能 - 显示弹窗、加载select数据
+    async addCategoriesBoxShow() {
+      this.addBoxShow = true
+      // 获取商品列表数据，用于渲染select
+      let { data: res } = await this.axios.get('/categories/', {
+        params: { type: 2 }
+      })
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.categoriesOptions = res.data
+    },
+    // 添加功能 - 提交数据
+    async addCategories() {
+      let { data: res } = await this.axios.post(
+        '/categories/',
+        this.addFormData
+      )
+      if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
+      this.$message.success(res.meta.msg)
+      this.addBoxShow = false
+      this.getCategoriesData()
+    },
+    // 添加功能 - select值改变后触发事件 : 判断所选select层级、并获取id，用于后续添加时请求接口
+    categoriesOptionsChange() {
+      if (this.selectedOptions.length === 0) {
+        this.addFormData.cat_level = 0
+        this.addFormData.cat_pid = 0
+      } else {
+        let len = this.selectedOptions.length
+        this.addFormData.cat_level = len
+        this.addFormData.cat_pid = this.selectedOptions[len - 1]
+      }
+    },
+    // 添加功能 - 弹窗关闭重置表单数据
+    resetAddBox() {
+      this.$refs.addForm.resetFields()
+      this.selectedOptions = []
+      this.addFormData.cat_pid = 0
+      this.addFormData.cat_level = 0
     },
     // 分页功能：每页显示数据量 改变后
     handleSizeChange(val) {

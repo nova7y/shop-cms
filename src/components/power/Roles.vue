@@ -266,7 +266,7 @@ export default {
       let { data: res } = await this.axios.get('rights/tree')
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.divisionData = res.data
-      // 递归遍历role信息，找出该角色下的权限id
+      // 递归遍历role信息，找出该角色下的尾部权限id
       let tempAry = []
       this.getLeafIds(role, tempAry)
       this.defaultCheckedKeys = tempAry

@@ -32,4 +32,4 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 - 权限管理：角色列表渲染、添加角色、编辑、删除
 - 权限管理：分配权限功能、删除权限功能
 - 商品管理：商品分类（列表渲染 + 分页功能 + 编辑 + 删除）
-- 商品管理：商品分类（添加） 待完成
+- 商品管理：商品分类（添加） 分类参数（）
