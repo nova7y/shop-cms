@@ -7,6 +7,7 @@ import User from '../components/users/UsersList.vue' // 用户管理-用户列�
 import Rights from '../components/power/Rights.vue' // 权限管理-权限列表
 import Roles from '../components/power/Roles.vue' // 权限管理-角色列表
 import Categories from '../components/goods/Categories.vue' // 商品管理-商品分类
+import Params from '../components/goods/Params.vue' // 商品管理-分类参数
 
 Vue.use(Router)
 
@@ -36,6 +37,9 @@ const router = new Router({
     }, {
       path: '/categories',
       component: Categories
+    }, {
+      path: '/params',
+      component: Params
     }]
   }]
 })

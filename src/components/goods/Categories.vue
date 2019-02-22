@@ -90,6 +90,7 @@
               :props="categoriesOptionsProps"
               @change="categoriesOptionsChange"
               v-model="selectedOptions"
+              expand-trigger="hover"
               change-on-select
               clearable
               style="width:100%"
